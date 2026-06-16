@@ -5,6 +5,7 @@
     <servlet-class>gold.framework.FrontController</servlet-class>
   </servlet>
 
+
   <servlet-mapping>
     <servlet-name>TestFramework</servlet-name>
     <url-pattern>/*</url-pattern>

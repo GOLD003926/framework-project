@@ -26,7 +26,6 @@ public class Utils {
                     scannerDossier(dossier, BASE_PACKAGE, controllers);
                 }
             }
-
         } catch (IOException e) {
             System.err.println("[Framework] Erreur scan classpath : " + e.getMessage());
         }
@@ -56,7 +55,6 @@ public class Utils {
                         controllers.add(classe);
                         System.out.println("[Framework] Controller trouvé : " + nomClasse);
                     }
-
                 } catch (ClassNotFoundException | NoClassDefFoundError e) {
                     // sécurité : on ignore les classes non chargeables
                     System.err.println("[Framework] Classe ignorée : " + nomClasse);
