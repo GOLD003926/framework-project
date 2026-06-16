@@ -1,1 +1,3 @@
 gold/framework/FrontController.class
+gold/framework/annotation/Controller.class
+gold/framework/utils/Utils.class
