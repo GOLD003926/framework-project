@@ -7,7 +7,7 @@
 
   <groupId>gold.app</groupId>
   <artifactId>app</artifactId>
-  <version>1.0.0</version>
+  <version>test.framework-1.0.0</version>
   <packaging>war</packaging>
 
   <properties>
