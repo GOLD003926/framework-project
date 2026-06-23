@@ -12,5 +12,5 @@ mvn clean package
 cd ..
 
 echo "=== 3. Deploy sur Tomcat ==="
-cp app/target/app-1.0.0.war $CATALINA_HOME/webapps/
-echo "Deploy OK → http://localhost:8080/app-1.0.0/"
+cp app/target/app-test.framework-1.0.0.war $CATALINA_HOME/webapps/
+echo "Deploy OK → http://localhost:8080/app-test.framework-1.0.0/"

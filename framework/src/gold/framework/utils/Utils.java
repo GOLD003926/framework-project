@@ -1,13 +1,17 @@
 package gold.framework.utils;
 
 import gold.framework.annotation.Controller;
+import gold.framework.annotation.UrlMapping;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Utils {
 
@@ -61,6 +65,30 @@ public class Utils {
                 }
             }
         }
+    }
+
+    /**
+     * Scanne les méthodes annotées @UrlMapping dans chaque controller.
+     *
+     * @param listController liste des classes controllers détectées
+     * @return Map : controller -> liste des méthodes annotées @UrlMapping
+     */
+    public static Map<Class<?>, List<Method>> scanMethodes(List<Class<?>> listController) {
+        Map<Class<?>, List<Method>> resultat = new HashMap<>();
+        for (Class<?> classe : listController) {
+            List<Method> methodesMappees = new ArrayList<>();
+            for (Method methode : classe.getDeclaredMethods()) {
+                if (methode.isAnnotationPresent(UrlMapping.class)) {
+                    methodesMappees.add(methode);
+                    String url = methode.getAnnotation(UrlMapping.class).value();
+                    System.out.println("[Framework] @UrlMapping trouvé : "
+                            + classe.getSimpleName() + "#" + methode.getName()
+                            + " -> " + url);
+                }
+            }
+            resultat.put(classe, methodesMappees);
+        }
+        return resultat;
     }
 
     private static boolean isController(Class<?> classe) {
