@@ -6,13 +6,9 @@ import gold.framework.annotation.UrlMapping;
 @Controller
 public class TestServlet {
 
-    @UrlMapping("/hello")
-    public void hello() {
-        System.out.println("[TestServlet] hello() appelé");
-    }
-
-    @UrlMapping("/")
-    public void home() {
+    @UrlMapping(value = "/", type = UrlMapping.TYPE.GET)
+    public String home() {
         System.out.println("[TestServlet] home() appelé");
+        return "goldFramework";
     }
 }
