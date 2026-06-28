@@ -40,7 +40,7 @@ public class Affichage {
         }
     }
 
-    public static Method verifierUrl(Map<Class<?>, List<Method>> listeMethode, PrintWriter out,
+    public static Object[]  verifierUrl(Map<Class<?>, List<Method>> listeMethode, PrintWriter out,
             HttpServletRequest request) {
         String pathInfo = request.getPathInfo();
         String servletPath = request.getServletPath();
@@ -49,10 +49,10 @@ public class Affichage {
 
         System.out.println("[FrontController] verifierUrl -> chemin = " + chemin);
 
+        Object[] retour = new Object[2];
         for (Map.Entry<Class<?>, List<Method>> entry : listeMethode.entrySet()) {
             Class<?> classe = entry.getKey();
             List<Method> methodes = entry.getValue();
-
             for (Method m : methodes) {
                 String mappedUrl = m.getAnnotation(UrlMapping.class).value();
                 UrlMapping.TYPE type = m.getAnnotation(UrlMapping.class).type();
@@ -65,7 +65,9 @@ public class Affichage {
                     out.println("  → ");
                     out.println("  <code>" + classe.getSimpleName() + "#" + m.getName() + "()</code>");
                     out.println("</div>");
-                    return m;
+                    retour[0] = m;
+                    retour[1] = classe;
+                    return retour;
                 }
             }
         }

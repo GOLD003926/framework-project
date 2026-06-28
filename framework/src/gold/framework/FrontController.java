@@ -4,6 +4,7 @@ import gold.framework.affichage.Affichage;
 import gold.framework.annotation.UrlMapping;
 import gold.framework.utils.Utils;
 
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -65,6 +66,24 @@ public class FrontController extends HttpServlet {
 
     private void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+
+        //  JSP  compilées par le moteur JSP de Tomcat
+        String chemin = request.getPathInfo() != null ? request.getPathInfo() : request.getServletPath();
+        if (chemin.endsWith(".jsp")) {
+            RequestDispatcher jspDispatcher = request.getServletContext()
+                    .getNamedDispatcher("jsp");
+            jspDispatcher.forward(request, response);
+            return;
+        }
+        // Laisser les ressources statiques passer sans être interceptées
+        if (chemin.endsWith(".css") || chemin.endsWith(".js")
+                || chemin.endsWith(".png") || chemin.endsWith(".jpg") || chemin.endsWith(".ico")) {
+            RequestDispatcher defaultDispatcher = request.getServletContext()
+                    .getNamedDispatcher("default");
+            defaultDispatcher.forward(request, response);
+            return;
+        }
+
         String url = request.getRequestURI();
         System.out.println("[FrontController] URL reçue --> " + url);
 
@@ -82,16 +101,31 @@ public class FrontController extends HttpServlet {
         out.println("<h1>FrontController</h1>");
         out.println("<p>URL reçue : <code>" + url + "</code> (Method: " + request.getMethod() + ")</p>");
 
-        Method methodConcernee = verifierUrl(out, request);
+        Object[] methodConcernee = verifierUrl(out, request);
         if (methodConcernee == null) {
+            out.println("</body></html>");
             return;
         }
-        Affichage.urlDispoParController(listeMethode, out);
-
-        out.println("</body></html>");
+        invokeMethod(methodConcernee, request, response);
     }
 
-    private Method verifierUrl(PrintWriter out, HttpServletRequest request) {
+    private Object[] verifierUrl(PrintWriter out, HttpServletRequest request) {
+        Affichage.urlDispoParController(listeMethode, out);
         return Affichage.verifierUrl(listeMethode, out, request);
+    }
+
+    private void invokeMethod(Object[] methodeConcernee, HttpServletRequest request, HttpServletResponse response) {
+        try {
+            Class<?> classe = (Class<?>) methodeConcernee[1];
+            Method methode = (Method) methodeConcernee[0];
+            Object retour = methode.invoke(classe.getDeclaredConstructor().newInstance());
+            String page = String.valueOf(retour);
+            if (!page.equals("null") && !page.equalsIgnoreCase("goldFramework")) {
+                RequestDispatcher dispatcher = request.getRequestDispatcher("/" + page + ".jsp");
+                dispatcher.forward(request, response);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
