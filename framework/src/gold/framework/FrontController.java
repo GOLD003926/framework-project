@@ -3,7 +3,6 @@ package gold.framework;
 import gold.framework.affichage.Affichage;
 import gold.framework.annotation.UrlMapping;
 import gold.framework.utils.Utils;
-
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
