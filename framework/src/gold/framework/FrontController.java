@@ -2,7 +2,6 @@ package gold.framework;
 
 import gold.framework.affichage.Affichage;
 import gold.framework.annotation.UrlMapping;
-import gold.framework.utils.Utils;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -16,39 +15,18 @@ import java.util.Map;
 
 public class FrontController extends HttpServlet {
 
-    private List<Class<?>> listeClassController;
+    private List<Class<?>>              listeClassController;
     private Map<Class<?>, List<Method>> listeMethode;
 
     @Override
+    @SuppressWarnings("unchecked")
     public void init() throws ServletException {
         super.init();
-        initialiserFramework();
-    }
-
-    private void initialiserFramework() {
-        System.out.println("=== Initialisation du framework ===");
-
-        // 1. Scan des controllers
-        listeClassController = Utils.scanControllers();
-        System.out.println("Nombre de controllers trouvés : " + listeClassController.size());
-
-        // 2. Scan des méthodes @UrlMapping par controller
-        listeMethode = Utils.scanMethodes(listeClassController);
-
-        // 3. Log récapitulatif
-        for (Class<?> classe : listeClassController) {
-            System.out.println("\n[Controller] " + classe.getName());
-            List<Method> methodes = listeMethode.get(classe);
-            if (methodes == null || methodes.isEmpty()) {
-                System.out.println("   (aucune URL mappée)");
-            } else {
-                for (Method m : methodes) {
-                    String url = m.getAnnotation(UrlMapping.class).value();
-                    System.out.println("   @UrlMapping -> " + url + "  [méthode: " + m.getName() + "]");
-                }
-            }
-        }
-        System.out.println("\n=== Framework initialisé ! ===");
+        // L'initialisation est faite par FrameworkListener au démarrage du contexte.
+        // On récupère simplement les données déjà construites.
+        listeClassController = (List<Class<?>>)              getServletContext().getAttribute(FrameworkListener.KEY_CONTROLLERS);
+        listeMethode         = (Map<Class<?>, List<Method>>) getServletContext().getAttribute(FrameworkListener.KEY_METHODES);
+        System.out.println("[FrontController] init() -> données chargées depuis ServletContext");
     }
 
     @Override
