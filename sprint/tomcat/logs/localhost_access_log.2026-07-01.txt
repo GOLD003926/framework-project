@@ -1,0 +1,6 @@
+0:0:0:0:0:0:0:1 - - [01/Jul/2026:11:23:16 +0300] "GET / HTTP/1.1" 200 11363
+0:0:0:0:0:0:0:1 - - [01/Jul/2026:11:23:25 +0300] "GET /AppFramework/dept/list HTTP/1.1" 200 362
+0:0:0:0:0:0:0:1 - - [01/Jul/2026:11:23:39 +0300] "GET /AppFramework/dept/list HTTP/1.1" 200 362
+0:0:0:0:0:0:0:1 - - [01/Jul/2026:11:23:44 +0300] "GET /AppFramework/ HTTP/1.1" 200 353
+0:0:0:0:0:0:0:1 - - [01/Jul/2026:11:24:59 +0300] "GET /AppFramework/dept/list HTTP/1.1" 200 362
+0:0:0:0:0:0:0:1 - - [01/Jul/2026:11:26:08 +0300] "GET /AppFramework/dept/list HTTP/1.1" 200 262

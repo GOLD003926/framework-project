@@ -1,0 +1,7 @@
+0:0:0:0:0:0:0:1 - - [30/Jun/2026:10:43:02 +0300] "GET / HTTP/1.1" 200 11363
+0:0:0:0:0:0:0:1 - - [30/Jun/2026:10:43:06 +0300] "GET /AppFramework/dept/list HTTP/1.1" 200 262
+0:0:0:0:0:0:0:1 - - [30/Jun/2026:10:44:37 +0300] "GET /AppFramework/jhasdfilaugfiluagfuagufl HTTP/1.1" 200 758
+0:0:0:0:0:0:0:1 - - [30/Jun/2026:10:44:49 +0300] "GET /AppFramework/andrana HTTP/1.1" 200 741
+0:0:0:0:0:0:0:1 - - [30/Jun/2026:10:45:00 +0300] "GET /AppFramework/dept/list HTTP/1.1" 200 262
+0:0:0:0:0:0:0:1 - - [30/Jun/2026:10:45:06 +0300] "GET /AppFramework/andrana HTTP/1.1" 200 741
+0:0:0:0:0:0:0:1 - - [30/Jun/2026:10:51:39 +0300] "GET /AppFramework/dept/list HTTP/1.1" 200 262
