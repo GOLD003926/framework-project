@@ -9,6 +9,7 @@ import mg.nandra.framework.annotation.Param;
 import mg.nandra.framework.enumeration.HttpMethod;
 
 import mg.nandra.framework.model.ModelAndView;
+import mg.nandra.framework.model.MySession;
 
 @Controller
 public class Test2Controller {
@@ -51,5 +52,23 @@ public class Test2Controller {
     public Artiste submitPersonneObject(Artiste personne) {
         new PersonneDAO().save(personne);
         return personne;
+    }
+    @UrlMapping(url = "/login", method = HttpMethod.POST)
+    public String login(@Param("nom") String nom, MySession session) {
+        session.set("user", nom);
+        return "Connecté : " + nom;
+    }
+
+    @UrlMapping(url = "/profil", method = HttpMethod.GET)
+    public String profil(MySession session) {
+        String user = session.get("user", String.class);
+        if (user == null) return "Non connecté";
+        return "Bonjour " + user;
+    }
+
+    @UrlMapping(url = "/logout", method = HttpMethod.GET)
+    public String logout(MySession session) {
+        session.invalidate();
+        return "Déconnecté";
     }
 }

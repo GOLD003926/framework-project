@@ -7,7 +7,7 @@ WEB_DIR="src/webapps"
 BUILD_DIR="build"
 LIB_DIR="lib"
 TOMCAT_WEBAPPS="./../tomcat/webapps"
-MINI_FRAMEWORK_JAR="$LIB_DIR/mini-framework-v9.jar"
+MINI_FRAMEWORK_JAR="$LIB_DIR/mini-framework-sprint-9-v10.jar"
 
 # Nettoyage et création du répertoire temporaire
 rm -rf $BUILD_DIR

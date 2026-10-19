@@ -16,7 +16,6 @@ public class MySession {
         this.request = request;
     }
 
-    // La session HTTP n'est créée que si on l'utilise vraiment
     private HttpSession session() {
         return request.getSession(true);
     }
