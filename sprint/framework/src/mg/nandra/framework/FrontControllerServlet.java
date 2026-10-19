@@ -4,7 +4,7 @@ import mg.nandra.framework.outils.*;
 import mg.nandra.framework.annotation.*;
 import mg.nandra.framework.enumeration.HttpMethod;
 import mg.nandra.framework.model.ModelAndView;
-
+import mg.nandra.framework.model.MySession;
 import com.google.gson.Gson;
 
 import java.io.*;
@@ -77,29 +77,34 @@ public class FrontControllerServlet extends HttpServlet {
         if (matchedMapping != null) {
             try {
                 Object controllerInstance = matchedMapping.getControllerClass().getDeclaredConstructor().newInstance();
-                
+
                 Parameter[] parameters = matchedMapping.getMethod().getParameters();
                 Object[] arguments = new Object[parameters.length];
-                
+
                 for (int i = 0; i < parameters.length; i++) {
-                    
+
                     Parameter parameter = parameters[i];
+                    Class<?> parameterType = parameter.getType();
 
-                    if (parameter.isAnnotationPresent(Param.class)) {
+                    if (parameterType == MySession.class) {
+                        arguments[i] = new MySession(req);
 
+                    } else if (parameterType == HttpSession.class) {
+                        arguments[i] = req.getSession(true);
+
+                    } else if (parameterType == HttpServletRequest.class) {
+                        arguments[i] = req;
+
+                    } else if (parameterType == HttpServletResponse.class) {
+                        arguments[i] = res;
+
+                    } else if (parameter.isAnnotationPresent(Param.class)) {
                         Param param = parameter.getAnnotation(Param.class);
                         String value = req.getParameter(param.value());
-                        arguments[i] = convertValue(
-                            value,
-                            parameter.getType()
-                        );
-                    } else {
-                        Class<?> parameterType = parameter.getType();
+                        arguments[i] = convertValue(value, parameterType);
 
-                        arguments[i] = bindObject(
-                            parameterType,
-                            req
-                        );
+                    } else {
+                        arguments[i] = bindObject(parameterType, req, "");
                     }
                 }
 
@@ -131,7 +136,7 @@ public class FrontControllerServlet extends HttpServlet {
                 } else {
                     if (returnValue instanceof ModelAndView) {
                         ModelAndView mv = (ModelAndView) returnValue;
-                        
+
                         if (mv.getModel() != null) {
                             for (Map.Entry<String, Object> entry : mv.getModel().entrySet()) {
                                 req.setAttribute(entry.getKey(), entry.getValue());
@@ -142,7 +147,7 @@ public class FrontControllerServlet extends HttpServlet {
 
                         RequestDispatcher dispatcher = req.getRequestDispatcher(viewPath);
                         dispatcher.forward(req, res);
-                        
+
                     } else if (returnValue instanceof String) {
                         res.setContentType("text/plain;charset=UTF-8");
                         res.getWriter().println(returnValue);
@@ -232,45 +237,48 @@ public class FrontControllerServlet extends HttpServlet {
         );
     }
 
-    private Object bindObject(Class<?> objectClass, HttpServletRequest req)
+    private Object bindObject(Class<?> objectClass, HttpServletRequest req, String prefix)
     throws Exception
     {
-        Object object = objectClass
-                .getDeclaredConstructor()
-                .newInstance();
+        Object object = objectClass.getDeclaredConstructor().newInstance();
 
-        Method[] methods = objectClass.getMethods();
-
-        for (Method method : methods) {
-
+        for (Method method : objectClass.getMethods()) {
             String methodName = method.getName();
 
-            if (!methodName.startsWith("set")) {
-                continue;
+            if (!methodName.startsWith("set") || methodName.length() <= 3) continue;
+            if (method.getParameterCount() != 1) continue;
+
+            String fieldName = Character.toLowerCase(methodName.charAt(3))
+                    + methodName.substring(4);
+            String paramName = prefix + fieldName;
+            Class<?> type = method.getParameterTypes()[0];
+
+            if (isSimpleType(type)) {
+                String value = req.getParameter(paramName);
+                if (value == null || value.isEmpty()) continue;
+                method.invoke(object, convertValue(value, type));
+            } else if (hasNestedParam(req, paramName + ".")) {
+                // objet imbriqué : on rappelle bindObject avec le préfixe "sexe."
+                method.invoke(object, bindObject(type, req, paramName + "."));
             }
-
-            if (method.getParameterCount() != 1) {
-                continue;
-            }
-
-            String fieldName = methodName.substring(3);
-
-            fieldName = Character.toLowerCase(fieldName.charAt(0))
-                    + fieldName.substring(1);
-
-            String value = req.getParameter(fieldName);
-
-            if (value == null) {
-                continue;
-            }
-
-            Class<?> parameterType = method.getParameterTypes()[0];
-
-            Object convertedValue = convertValue(value, parameterType);
-
-            method.invoke(object, convertedValue);
         }
-
         return object;
     }
+
+    private boolean isSimpleType(Class<?> type) {
+        return type.isPrimitive()
+                || type == String.class
+                || Number.class.isAssignableFrom(type)
+                || type == Boolean.class
+                || type == Character.class;
+    }
+
+    private boolean hasNestedParam(HttpServletRequest req, String prefix) {
+        java.util.Enumeration<String> names = req.getParameterNames();
+        while (names.hasMoreElements()) {
+            if (names.nextElement().startsWith(prefix)) return true;
+        }
+        return false;
+    }
+
 }

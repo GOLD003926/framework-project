@@ -1,6 +1,6 @@
 package mg.test.controller;
 
-import models.Personne;
+import models.*;
 
 import mg.nandra.framework.annotation.Controller;
 import mg.nandra.framework.annotation.UrlMapping;
@@ -16,15 +16,15 @@ public class Test2Controller {
     @UrlMapping(url = "/test", method = HttpMethod.GET)
     public ModelAndView testerUrl() {
         ModelAndView mv = new ModelAndView();
-        mv.addAttribute("personne", new Personne(1, "Rakoto", "Jean", "S4"));
+        mv.addAttribute("personne", new Artiste(1, "Rakoto", "Jean",null));
         mv.setView("accueil");
         return mv;
     }
 
     @UrlMapping(url = "/api/v1", method = HttpMethod.GET)
     @JsonResponse
-    public Personne testApiv1() {
-        return new Personne(1, "Rakoto", "Jean", "S4");
+    public Artiste testApiv1() {
+        return new Artiste(1, "Rakoto", "Jean",null);
     }
 
     @UrlMapping(url = "/api/v3", method = HttpMethod.GET)
@@ -48,7 +48,8 @@ public class Test2Controller {
 
     @UrlMapping(url = "/submit-personne-object", method = HttpMethod.POST)
     @JsonResponse
-    public Personne submitPersonneObject(Personne personne) {
+    public Artiste submitPersonneObject(Artiste personne) {
+        new PersonneDAO().save(personne);
         return personne;
     }
 }

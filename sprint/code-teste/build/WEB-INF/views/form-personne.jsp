@@ -14,10 +14,10 @@
             Nom: <input type="text" name="nom">
         </p>
         <p>
-            Prenom: <input type="text" name="prenom">
+            Age: <input type="text" name="age">
         </p>
         <p>
-            Classe: <input type="text" name="classe">
+            Sexe: <input type="text" name="genre.libelle">
         </p>
         <p><button type="submit">Valider</button></p>
     </form>

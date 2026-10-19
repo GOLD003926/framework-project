@@ -25,6 +25,7 @@ cp -r $WEB_DIR/* $BUILD_DIR/WEB-INF/
 # Copier le JAR du mini-framework dans WEB-INF/lib
 cp $MINI_FRAMEWORK_JAR $BUILD_DIR/WEB-INF/lib/
 cp $LIB_DIR/gson-2.13.2.jar $BUILD_DIR/WEB-INF/lib/
+cp $LIB_DIR/sqlite-jdbc-3.46.1.3.jar $BUILD_DIR/WEB-INF/lib/
 
 # Générer le fichier .war dans le dossier build
 cd $BUILD_DIR || exit
